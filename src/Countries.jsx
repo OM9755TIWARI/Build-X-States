@@ -86,10 +86,10 @@ const Countries = () =>{
 
       {selectedCountries && selectedState && selectedCities && (
         
-        <p>
-         <strong style={{ color: "black" }}>You selected <h1>{selectedCities},</h1></strong>{" "}
+        <h1 style={{ fontSize: "24px", fontWeight: "normal" }}>
+        <strong style={{ color: "black" }}>You selected {selectedCities},</strong>{" "}
         <span style={{ color: "gray" }}>{selectedState}, {selectedCountries}</span>
-        </p>
+        </h1>
       )
 
       }
