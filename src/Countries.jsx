@@ -83,6 +83,14 @@ const Countries = () =>{
           <option key={ci} value={ci}>{ci}</option>
         ))}
       </select>
+
+      {selectedCountries && selectedState && selectedCities && (
+        <p style={{marginTop:  "20px"}}>
+            <strong>You Selected{selectedCountries},</strong> {selectedState}, {selectedCities}
+        </p>
+      )
+
+      }
         </div>
     )
 }
