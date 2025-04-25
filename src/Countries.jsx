@@ -11,10 +11,12 @@ const Countries = () =>{
    const [selectedState, setSelectedState] = useState('');
    const [selectedCountries, setSelectedCountries] = useState("");
    const [selectedCities, setSelectedCities] = useState("");
+   const [loading, setLoading] = useState({countries : false, state : false, cities : false,});
    
    const countryUrl = "https://crio-location-selector.onrender.com/countries";
 
    const fetchCountries = async() => {
+    setLoading((prev) => ({...prev, countries: true }));
     try{
             const response = await axios.get(countryUrl); 
             setCountries(response.data);
@@ -22,6 +24,9 @@ const Countries = () =>{
         catch(error){
             console.log('there is some fatching error : ', error);
         }
+        finally {
+            setLoading((prev) => ({ ...prev, countries: false }));
+          }
    }
    useEffect(() =>{
     fetchCountries();
@@ -29,6 +34,7 @@ const Countries = () =>{
 
    const fetchState = async() => {
     if(selectedCountries){
+        setLoading((prev) => ({...prev, state : true}));
         try{
         const response = await axios.get(`https://crio-location-selector.onrender.com/country=${selectedCountries}/states`);
 
@@ -39,6 +45,9 @@ const Countries = () =>{
         catch(error){
             console.log("there is some fatching error : ", error);
         }
+        finally{
+            setLoading((prev) => ({...prev, state : false}))
+        }
     }
    }
    useEffect(() => {
@@ -47,12 +56,16 @@ const Countries = () =>{
 
    const fetchCity = async() => {
     if(selectedState){
+        setLoading((prev) => ({...prev, cities : true}))
         try{
             const response = await axios.get(`https://crio-location-selector.onrender.com/country=${selectedCountries}/state=${selectedState}/cities`);
             setCities(response.data);
         }
         catch(error){
-            console.log('there is csome fatching error : ', error);
+            console.log('there is some fatching error : ', error);
+        }
+        finally{
+            setLoading((prev) => ({...prev, cities : false}))
         }
     }
    }
@@ -84,16 +97,23 @@ const Countries = () =>{
         ))}
       </select>
 
-      {selectedCountries && selectedState && selectedCities && (
-        
-        <h1 style={{ fontSize: "24px", fontWeight: "normal" }}>
-        <strong style={{ color: "black" }}>You selected {selectedCities},</strong>{" "}
-        <span style={{ color: "gray" }}>{selectedState}, {selectedCountries}</span>
-        </h1>
-      )
 
-      }
-        </div>
+      <div>
+         {loading.countries && <p>Loading Countries...</p>}
+         {!loading.countries && countries.length === 0 && (<p> Failed to load countries.please try again later </p>)}
+
+         {loading.state && <p>Loading States...</p>}
+         {!loading.state && state.length === 0 && selectedCountries && (<p> Failed to load states.please try again later </p>)}
+
+         {loading.cities && <p>Loading Cities...</p>}
+         {loading.cities && cities.length === 0 && selectedCountries && selectedState && (<p> Failed to load cities.please try again later </p>) }
+      </div>
+
+      {
+        selectedCities && (<div><h2>You Selected <span>{selectedCities}</span>, <span>{" "}{selectedState}, {selectedCountries}</span></h2></div>)
+      }  
+      
+    </div>
     )
 }
 export default Countries;
