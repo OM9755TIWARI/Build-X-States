@@ -122,7 +122,9 @@
 
 
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+import '../src/Countries.css';
+import { useState, useEffect } from "react";
 
 const Countries = () => {
   const [countries, setCountries] = useState([]);
