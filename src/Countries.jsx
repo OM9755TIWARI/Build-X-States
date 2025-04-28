@@ -328,17 +328,18 @@ const Countries = () => {
             </p>
           )}
       </div>
-      {selectedCity && (
-        <div className="text">
-          <h2 className="result">
-            You selected <span style="font-size: 2em" className="highlight">{selectedCity}</span>,
-            <span className="fade">
-              {" "}
-              {selectedState}, {selectedCountry}
-            </span>
-          </h2>
-        </div>
-      )}
+{selectedCity && (
+  <div className="text">
+    <h2 className="result">
+      You selected{" "}
+      <span style={{ fontSize: "2em" }} className="highlight">{selectedCity}</span>,
+      <span className="fade">
+        {" "}
+        {selectedState}, {selectedCountry}
+      </span>
+    </h2>
+  </div>
+)}
     </div>
   );
 };
