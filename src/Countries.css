@@ -1,6 +1,41 @@
-.country {
-    font-size: 1.2rem;
-    padding: 10px;
+.location-form {
+    display: flex;
+    flex-direction: row; /* Make dropdowns horizontal */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    gap: 20px; /* Space between dropdowns */
+    margin-top: 20px;
+  }
+  
+  .dropdown {
     width: 200px;
-    margin: 10px;
-}
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: white;
+    cursor: pointer;
+  }
+  
+  .dropdown:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .location-display {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .result {
+    font-size: 22px;
+    font-weight: bold;
+  }
+  
+  .highlight {
+    color: black;
+  }
+  
+  .fade {
+    color: #888;
+  }
+  
