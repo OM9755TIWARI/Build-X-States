@@ -284,13 +284,13 @@ const Countries = () => {
             ))}
           </select>
 
-            {/* city selection */}
-            <select
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-            className="dropdown"
-            disabled={!selectedState}  // <- added this
-            >
+    {/* city selection */}
+    <select
+    value={selectedCity}
+    onChange={(e) => setSelectedCity(e.target.value)}
+    className="dropdown"
+    disabled={!selectedState}  // <- added this
+    >
 
             <option value="" disabled>
               Select City
@@ -330,13 +330,13 @@ const Countries = () => {
       </div>
       {selectedCity && (
         <div className="text">
-          <h2 className="result">
+          <h1 className="result">
             You selected <span className="highlight">{selectedCity}</span>,
             <span className="fade">
               {" "}
               {selectedState}, {selectedCountry}
             </span>
-          </h2>
+          </h1>
         </div>
       )}
     </div>
