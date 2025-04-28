@@ -125,100 +125,221 @@
 import React from "react";
 import '../src/Countries.css';
 import { useState, useEffect } from "react";
+import axios from 'axios';
+
+
+// base URL
+const BASE_API_URL = "https://crio-location-selector.onrender.com";
+
+// https://crio-location-selector.onrender.com/country=India/state=Maharashtra/cities
 
 const Countries = () => {
+  // functions to manage the state of countries array
   const [countries, setCountries] = useState([]);
-  const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
+  // functions to manage the selection of countries
   const [selectedCountry, setSelectedCountry] = useState("");
+
+  // functions to manage the array of states
+  const [states, setStates] = useState([]);
+  // functions to manage the selection of states
   const [selectedState, setSelectedState] = useState("");
+
+  // functions to manage the array of cities
+  const [cities, setCities] = useState([]);
+  // functions to manage the selection of city
   const [selectedCity, setSelectedCity] = useState("");
 
+  const [loading, setLoading] = useState({
+    countries: false,
+    states: false,
+    cities: false,
+  });
+
+  // useEffect hook to fetch the countries array
   useEffect(() => {
-    fetch("https://crio-location-selector.onrender.com/countries")
-      .then((res) => res.json())
-      .then((data) => setCountries(data))
-      .catch((err) => console.error("Error fetching countries:", err));
+    // function to fetch the countries
+    async function fetchCountries() {
+      setLoading((prev) => ({ ...prev, countries: true }));
+      try {
+        let response = await fetch(`${BASE_API_URL}/countries`);
+
+        const countriesJson = await response.json();
+
+        //console.log(countriesJson);
+        setCountries(countriesJson);
+        console.log(countriesJson);
+      } catch (error) {
+        console.log("Error fetching data");
+        setCountries([]);
+      } finally {
+        setLoading((prev) => ({ ...prev, countries: false }));
+      }
+    }
+
+    fetchCountries();
   }, []);
 
-  const handleCountryChange = (e) => {
-    const country = e.target.value;
-    setSelectedCountry(country);
-    setSelectedState("");
-    setSelectedCity("");
-    setStates([]);
-    setCities([]);
+  //useEffect to fetch the states
+  useEffect(() => {
+    // function to get the array of states
+    if (selectedCountry) {
+      async function fetchStates() {
+        setLoading((prev) => ({ ...prev, states: true }));
+        try {
+          let response = await fetch(
+            `${BASE_API_URL}/country=${selectedCountry}/states`
+          );
 
-    fetch(
-      `https://crio-location-selector.onrender.com/country=${country}/states`
-    )
-      .then((res) => res.json())
-      .then((data) => setStates(data))
-      .catch((err) => console.error("Error fetching states:", err));
-  };
+          let statesJson = await response.json();
+          setStates(statesJson);
+        } catch (error) {
+          console.log("Error fetching states");
+          setStates([]);
+        } finally {
+          setLoading((prev) => ({ ...prev, states: false }));
+        }
+      }
 
-  const handleStateChange = (e) => {
-    const state = e.target.value;
-    setSelectedState(state);
-    setSelectedCity("");
-    setCities([]);
+      fetchStates();
+    }
+  }, [selectedCountry]);
 
-    fetch(
-      `https://crio-location-selector.onrender.com/country=${selectedCountry}/state=${state}/cities`
-    )
-      .then((res) => res.json())
-      .then((data) => setCities(data))
-      .catch((err) => console.error("Error fetching cities:", err));
-  };
+  // useEffect hook for cities
+  useEffect(() => {
+    if (selectedCountry && selectedState) {
+      async function fetchCities() {
+        setLoading((prev) => ({ ...prev, cities: true }));
+        try {
+          let response = await fetch(
+            `${BASE_API_URL}/country=${selectedCountry}/state=${selectedState}/cities`
+          );
 
-  const handleCityChange = (e) => {
-    const city = e.target.value;
-    setSelectedCity(city);
-  };
+          let citiesJson = await response.json();
+          //console.log(citiesJson);
+
+          if (Array.isArray(citiesJson)) {
+            setCities(citiesJson);
+          } else {
+            console.log("Invalid data received for cities");
+            setCities([]);
+          }
+        } catch (error) {
+          console.log("Error fetching cities");
+          setCities([]);
+        } finally {
+          setLoading((prev) => ({ ...prev, cities: false }));
+        }
+      }
+
+      fetchCities();
+    }
+  }, [selectedCountry, selectedState]);
 
   return (
     <div>
-      <h2>Select Location</h2>
-      <select value={selectedCountry} onChange={handleCountryChange}>
-        <option value="">Select Country</option>
-        {countries.map((country) => (
-          <option key={country} value={country}>
-            {country}
-          </option>
-        ))}
-      </select>
+      <h1>Select Location</h1>
+      <div className="location-form-div">
+        <form className="location-form">
+          {/* country select */}
+          <select
+            value={selectedCountry}
+            onChange={(e) => {
+              setSelectedCountry(e.target.value);
+              setStates([]);
+              setSelectedState("");
+              setCities([]);
+              setSelectedCity("");
+            }}
+            className="dropdown"
+          >
+            <option value="" disabled>
+              Select Country
+            </option>
+            {countries.map((country, index) => (
+              <option key={index} value={country}>
+                {country}
+              </option>
+            ))}
+          </select>
 
-      <select
-        value={selectedState}
-        onChange={handleStateChange}
-        disabled={!selectedCountry}
-      >
-        <option value="">Select State</option>
-        {states.map((state) => (
-          <option key={state} value={state}>
-            {state}
-          </option>
-        ))}
-      </select>
+                {/* state select */}
+                <select
+                value={selectedState}
+                onChange={(e) => {
+                    setSelectedState(e.target.value);
+                    setCities([]);
+                    setSelectedCity("");
+                }}
+                className="dropdown"
+                disabled={!selectedCountry} 
+                >
 
-      <select
-        value={selectedCity}
-        onChange={handleCityChange}
-        disabled={!selectedState}
-      >
-        <option value="">Select City</option>
-        {cities.map((city) => (
-          <option key={city} value={city}>
-            {city}
-          </option>
-        ))}
-      </select>
+            <option value="" disabled>
+              Select State
+            </option>
+            {states.map((state, index) => (
+              <option key={index} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
 
-      {selectedCity && (
-        <p>
-          You selected {selectedCity}, {selectedState}, {selectedCountry}
-        </p>
-      )}
+    {/* city selection */}
+    <select
+    value={selectedCity}
+    onChange={(e) => setSelectedCity(e.target.value)}
+    className="dropdown"
+    disabled={!selectedState}  // <- added this
+    >
+
+            <option value="" disabled>
+              Select City
+            </option>
+            {cities.map((city, index) => (
+              <option key={index} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
+        </form>
+      </div>
+      <div className="location-display">
+        {loading.countries && <p>Loading Countries...</p>}
+        {!loading.countries && countries.length === 0 && (
+          <p className="error">
+            Failed to load countries. Please try again later.
+          </p>
+        )}
+
+        {loading.states && <p>Loading states...</p>}
+        {!loading.states && states.length === 0 && selectedCountry && (
+          <p className="error">
+            Failed to load states. Please try again later.
+          </p>
+        )}
+
+        {loading.cities && <p>Loading cities...</p>}
+        {!loading.cities &&
+          cities.length === 0 &&
+          selectedCountry &&
+          selectedState && (
+            <p className="error">
+              Failed to load cities. Please try again later.
+            </p>
+          )}
+      </div>
+{selectedCity && (
+  <div className="text">
+    <h2 className="result">
+      You selected{" "}
+      <span style={{ fontSize: "2em" }} className="highlight">{selectedCity}</span>,
+      <span className="fade">
+        {" "}
+        {selectedState}, {selectedCountry}
+      </span>
+    </h2>
+</div>
+)} 
     </div>
   );
 };
