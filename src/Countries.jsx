@@ -330,13 +330,13 @@ const Countries = () => {
       </div>
       {selectedCity && (
         <div className="text">
-          <h1 className="result">
-            You selected <span className="highlight">{selectedCity}</span>,
+          <h2 className="result">
+            You selected <span style="font-size: 2em" className="highlight">{selectedCity}</span>,
             <span className="fade">
               {" "}
               {selectedState}, {selectedCountry}
             </span>
-          </h1>
+          </h2>
         </div>
       )}
     </div>
