@@ -111,11 +111,12 @@ const App = () => {
         </select>
       </div>
 
-{selectedCity && selectedState && selectedCountry ? (
-  <h1>
-    You selected {selectedCity}, {selectedState}, {selectedCountry}
-  </h1>
-) : null}
+      {selectedCity && selectedState && selectedCountry && (
+        <h1>
+          You selected {selectedCity}, {selectedState}, {selectedCountry}
+        </h1>
+      )}
+
     </div>
   );
 };
